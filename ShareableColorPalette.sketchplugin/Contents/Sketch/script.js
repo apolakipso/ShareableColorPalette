@@ -100,6 +100,7 @@ function addColorGroup (color){
   //Create layer group
   var hexString = "#" + palette[color].hexValue()
   var rgbaString = getColorStringWithAlpha(palette[color])
+  var varName = '--color-'
 
   var namedColor = classifier.classify(hexString)
   layergroup = MSLayerGroup.new()
@@ -116,7 +117,7 @@ function addColorGroup (color){
 
   //Define size and position
 
-  var calculatedY = (height + 83 + colorMargin) * Math.floor(color/colorsPerRow) + colorMargin
+  var calculatedY = (height + 90 + colorMargin) * Math.floor(color/colorsPerRow) + colorMargin
 
   var collapseRegression = colorsPerRow * Math.floor(color/colorsPerRow)
   var definedX = (color - collapseRegression) * (width + colorMargin) + colorMargin
@@ -139,8 +140,16 @@ function addColorGroup (color){
   //Named Color Text Layer
   var namedLayer = newTextLayer(datagroup, namedColor, colorbg, 11, 15, namedColor, 0, 16,"Helvetica-Bold","#000000")
 
+  //Variable Name Text Layer
+  var varNameLayer = newTextLayer(
+    datagroup, varName, namedLayer,
+    3, 0,
+    varName,
+    0, 13, "Helvetica-Bold", "#444444"
+  )
+
   //Hex Color Text Layer
-  var hexLayer = newTextLayer(datagroup, hexString, namedLayer, 3, 0, hexString, 0, 13, "Helvetica-Oblique", "#444444")
+  var hexLayer = newTextLayer(datagroup, hexString, varNameLayer, 3, 0, hexString, 0, 13, "Helvetica-Oblique", "#444444")
 
   //RGB Color Text Layer
   var rgbLayer = newTextLayer(datagroup, rgbaString, hexLayer, 3, 0 , rgbaString, 0, 14, "Helvetica-Oblique", "#444444" )
@@ -155,7 +164,7 @@ function addColorGroup (color){
 
     //Text layers Background
   var textbgPath = MSRectangleShape.alloc().initWithFrame_(NSMakeRect(dataX, dataY, width, dataHeight))
-  
+
   var textbg = MSShapeGroup.shapeWithPath(textbgPath)
   [textbg setName: "Data Background " + (color+1)]
 
@@ -165,7 +174,7 @@ function addColorGroup (color){
 
 
   //Adds the layers inside the groups
-  datagroup.addLayers([textbg, hexLayer, rgbLayer])
+  datagroup.addLayers([textbg, hexLayer, rgbLayer, varNameLayer])
   layergroup.addLayers( [datagroup, namedLayer, colorbg])
 
   //Resizes the layer group to fit the background and the text layers
